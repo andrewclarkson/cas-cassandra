@@ -9,8 +9,13 @@ import scala.concurrent.duration.Duration
 object CasCassandra {
   def main(args: Array[String]): Unit = {
     val system = ActorSystem("CasCassandra")
-    val cluster = Cluster.builder().addContactPoint("").build()
-    val session = cluster.connect()
+    val session = Cluster.builder()
+      .addContactPoint("cassandra-sg1-001")
+      .addContactPoint("cassandra-sg1-002")
+      .addContactPoint("cassandra-sg1-003")
+      .build()
+      .connect()
+
     val id = UUID.randomUUID()
     val writers = system.actorOf(RoundRobinPool(128).props(Props(classOf[CasWriter], id, session)), "writers")
 
@@ -24,7 +29,8 @@ object CasCassandra {
     val results = session.execute(
       QueryBuilder.select("counter").from("cas", "cas")
         .where(QueryBuilder.eq("id", id)))
-    val counter = results.one().getLong("counter")
+    
+    val counter = results.one().getLong("counter")    
     println(s"Counter value at $id: $counter")
   }
 }
