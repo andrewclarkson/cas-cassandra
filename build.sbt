@@ -1,0 +1,6 @@
+name := "cas-cassandra"
+scalaVersion := "2.12.0"
+libraryDependencies ++= Seq(
+  "com.typesafe.akka" %% "akka-actor" % "2.4.12",
+  "com.datastax.cassandra" % "cassandra-driver-core" % "3.1.0"
+)
